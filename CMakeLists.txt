@@ -80,6 +80,8 @@ include_directories(${WF_INCLUDE_DIRS})
 # Populate for pkg-config
 set(REQUIRES "sigc++-2.0")
 
+add_definitions(-DBUILDING_VARCONF_DSO)
+
 # Define source files for libraries
 
 set(SOURCE_FILES
