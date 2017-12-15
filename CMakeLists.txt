@@ -40,7 +40,9 @@ macro(wf_add_library _LIB_NAME _SOURCE_FILES_VAR _HEADER_FILES_VAR)
             )
 
     install(TARGETS ${_LIB_NAME}
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
     foreach (file ${${_HEADER_FILES_VAR}})
         get_filename_component(dir ${file} DIRECTORY)
