@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
 project(varconf)
+set(CMAKE_CXX_STANDARD 14)
 include(GNUInstallDirs)
 include(FindPkgConfig)
 
@@ -19,8 +20,13 @@ set(VARCONF_ABI_AGE 0)
 math(EXPR VARCONF_SOVERSION ${VARCONF_ABI_CURRENT}-${VARCONF_ABI_AGE})
 set(VARCONF_ABI_VERSION ${VARCONF_SOVERSION}.${VARCONF_ABI_AGE}.${VARCONF_ABI_REVISION})
 
-# Set compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+if (WIN32)
+  set(BUILD_SHARED_LIBS OFF) # On Win32, only static libs are exporting all symbols.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W0") # For now, disable warnings to speed up compile time
+else ()
+  set(BUILD_SHARED_LIBS ON)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+endif ()
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
@@ -33,11 +39,10 @@ set(DESCRIPTION "Configuration library for the Worldforge system.")
 # This macro defines a library
 macro(wf_add_library _LIB_NAME _SOURCE_FILES_VAR _HEADER_FILES_VAR)
 
-    add_library(${_LIB_NAME} SHARED ${${_SOURCE_FILES_VAR}})
+    add_library(${_LIB_NAME} ${${_SOURCE_FILES_VAR}} ${${_HEADER_FILES_VAR}})
     set_target_properties(${_LIB_NAME} PROPERTIES
             VERSION ${VARCONF_ABI_VERSION}
-            SOVERSION ${VARCONF_SOVERSION}
-            )
+            SOVERSION ${VARCONF_SOVERSION})
 
     install(TARGETS ${_LIB_NAME}
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
